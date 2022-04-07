@@ -144,25 +144,36 @@ extension SettingsViewController {
     guard let greenTF = greenColorTextField.text else { return }
     guard let blueTF = blueColorTextField.text else { return }
     
-    if let intValue = Int(redTF) {
-      redColorSlider.setValue(Float(intValue), animated: true)
-      setSliderLabelValues()
-      setColorPreview()
-    }
+    let values = [redTF, greenTF, blueTF]
     
-    if let intValue = Int(greenTF) {
-      greenColorSlider.setValue(Float(intValue), animated: true)
-      setSliderLabelValues()
-      setColorPreview()
-    }
-    
-    if let intValue = Int(blueTF) {
-      blueColorSlider.setValue(Float(intValue), animated: true)
-      setSliderLabelValues()
-      setColorPreview()
+    for value in values {
+      if let floatValue = Float(value) {
+        switch value {
+        case redTF:
+          redColorSlider.setValue(floatValue, animated: true)
+        case greenTF:
+          greenColorSlider.setValue(floatValue, animated:true)
+        default:
+          blueColorSlider.setValue(floatValue, animated: true)
+        }
+        
+        setSliderLabelValues()
+        setColorPreview()
+        
+      } else {
+        showWrongFormatAlert()
+      }
     }
     
     view.endEditing(true)
+  }
+  
+  private func showWrongFormatAlert() {
+    let alert = UIAlertController(title: "Something went wrong", message: "Text field is empty or wrong format is used! Please try again.", preferredStyle: .alert)
+    let closeAction = UIAlertAction(title: "Close", style: .cancel)
+    
+    alert.addAction(closeAction)
+    present(alert, animated: true)
   }
   
 }
@@ -187,4 +198,9 @@ extension SettingsViewController: UITextFieldDelegate {
     
     textField.selectAll(nil)
   }
+  
+  func textFieldDidEndEditing(_ textField: UITextField) {
+    setSliderValuesFromTF()
+  }
+  
 }
